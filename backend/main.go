@@ -62,7 +62,7 @@ func main() {
 func seedingPayment(db *sql.DB, n int) error {
 	rand.Seed(time.Now().UnixNano())
 
-	status := []string{"success", "failed"}
+	status := []string{"completed", "processing", "failed"}
 	merchants := []string{"Merchant A", "Merchant B", "Merchant C"}
 
 	for i := 0; i <= n; i++ {

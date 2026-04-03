@@ -65,6 +65,7 @@ func NewServer(apiHandler openapigen.ServerInterface, openapiYamlPath string) *S
 	}
 
 	r := chi.NewRouter()
+	r.Use(corsMiddleware)
 
 	r.Route("/", func(api chi.Router) {
 		api.Use(oapinethttpmw.OapiRequestValidatorWithOptions(
@@ -75,9 +76,6 @@ func NewServer(apiHandler openapigen.ServerInterface, openapiYamlPath string) *S
 				Options: openapi3filter.Options{
 					AuthenticationFunc: AuthenticationFunc(config.JwtSecret),
 				},
-				// Options: openapi3filter.Options{
-				// 	AuthenticationFunc: openapi3filter.NoopAuthenticationFunc,
-				// },
 			},
 		))
 		openapigen.HandlerFromMux(apiHandler, api)
@@ -86,6 +84,35 @@ func NewServer(apiHandler openapigen.ServerInterface, openapiYamlPath string) *S
 	return &Server{
 		router: r,
 	}
+}
+
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		allowed := os.Getenv("CORS_ALLOWED_ORIGINS")
+		origin := r.Header.Get("Origin")
+
+		if allowed == "" {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+		} else if origin != "" {
+			for _, o := range strings.Split(allowed, ",") {
+				if strings.TrimSpace(o) == origin {
+					w.Header().Set("Access-Control-Allow-Origin", origin)
+					w.Header().Set("Vary", "Origin")
+					break
+				}
+			}
+		}
+
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }
 
 func (s *Server) Start(addr string) {
