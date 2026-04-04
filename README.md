@@ -1,56 +1,46 @@
-# fullstack app
+# Durianpay Fullstack Take-Home
 
-Explain your service in here. This is fulltsack project related Payment using golang as backend and nuxt as frontend....
+Repository ini berisi:
+- `backend/` (Golang + SQLite)
+- `frontend/` (Vue + Vite)
 
-list of tools version of your machine:
+## Prasyarat
+- Go 1.21+
+- Node.js 20+
+- Make
 
-```bash
-go version go1.25.5 darwin/arm64
-node v24.13.1
+## Struktur
+```
+.
+├─ backend/
+├─ frontend/
+└─ openapi.yaml
 ```
 
-Install all related requirements:
-
+## Menjalankan Backend
 ```bash
-Add here
+cd backend
+cp env.sample .env
+make dep
+make gen-secret
+make openapi-gen
+make run
+```
+Backend berjalan di `http://localhost:8080`.
+
+## Menjalankan Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+Frontend berjalan di `http://localhost:3001`.
+
+## Testing Backend (contoh)
+```bash
+cd backend
+go test ./internal/module/payment/repository -v
 ```
 
-How to run backend server on local:
-
-```bash
-Add here
-```
-
-How to run backend server on production build:
-
-```bash
-Add here
-```
-
-How to run frontend on local:
-
-```bash
-Add here
-```
-
-How to run frontend on production build:
-
-```bash
-Add here
-```
-
-To checking openapi documentations, you can visit this url after backend running.
-
-```bash
-Add here
-```
-
-Login to frontend by visiting:
-
-```bash
-Add here
-```
-
-evidences: Add video evidences of your service
-see backend [README.md](backend/README.md)
-see frontend [README.md](frontend/README.md)
+## API
+Lihat `openapi.yaml` di root.

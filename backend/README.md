@@ -1,30 +1,26 @@
-Scaffold demonstrating entity / repository / usecase / service separation.
+Backend (Golang + SQLite)
 
-generate openapi:
+## Prasyarat
+- Go 1.21+
+- Make
 
-```bash
-make openapi-gen
-```
-
-generate JWT_SECRET:
-
-```bash
-make gen-secret
-```
-
-Run server:
-
+## Setup & Run
 ```bash
 cp env.sample .env
-make tool-openapi
-make openapi-gen
 make dep
 make gen-secret
+make openapi-gen
 make run
 ```
 
-API:
+Server berjalan di `http://localhost:8080`.
 
-- POST /dashboard/v1/auth/login {email,password}
-- GET /dashboard/v1/payments?sort=sort,status=status,id=id
-- PUT /dashboard/v1/payment/{id}/review
+## Endpoint Utama
+- `POST /dashboard/v1/auth/login`
+- `GET /dashboard/v1/payments?status=...&id=...&sort=...`
+- `GET /dashboard/v1/widget`
+
+## Testing (contoh)
+```bash
+go test ./internal/module/payment/repository -v
+```
