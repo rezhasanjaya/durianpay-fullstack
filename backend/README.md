@@ -4,13 +4,23 @@ Backend (Golang + SQLite)
 - Go 1.21+
 - Make
 
-## Setup & Run
+## Setup
 ```bash
 cp env.sample .env
 make dep
 make gen-secret
 make openapi-gen
-make run
+```
+
+## Running
+Run With MAKE
+```bash
+make run 
+```
+
+OR You Can Run With AIR
+```bash
+air
 ```
 
 Server berjalan di `http://localhost:8080`.
