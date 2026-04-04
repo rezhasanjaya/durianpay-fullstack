@@ -3,10 +3,12 @@ import { useAuthStore } from '../stores/auth'
 import { usePaymentStore } from '../stores/payment'
 import { useRouter } from 'vue-router'
 import { onMounted, ref, watch } from 'vue'
+import { formatTimestamp, capitalize } from '../utils/format'
 
 import Button from '../components/Button.vue'
 import Table from '../components/Table.vue'
 import InputField from '../components/InputField.vue'
+import SelectField from '../components/SelectField.vue'
 
 const authStore = useAuthStore()
 const paymentStore = usePaymentStore()
@@ -14,10 +16,17 @@ const route = useRouter()
 const selectedFilter = ref('all')
 const searchValue = ref('')
 const data = ref<any[]>([])
+const widget = ref<any>(null)
+const totalWidget = ref<number>(0)
 
 const handleLogout = () => {
     authStore.logout()
     route.push('/')
+}
+
+const handleReset = () => {
+    selectedFilter.value = 'all'
+    searchValue.value = ''
 }
 
 let searchTimer: ReturnType<typeof setTimeout> | null = null
@@ -31,8 +40,19 @@ const fetchPayments = async () => {
     }
 }
 
+const fetchWidget = async () => {
+    try {
+        await paymentStore.fetchWidget()
+        widget.value = paymentStore.widget
+        totalWidget.value = paymentStore.totalData
+    } catch (error) {
+        ///
+    }
+}
+
 onMounted(() => {
     fetchPayments()
+    fetchWidget()
 })
 
 watch(selectedFilter, () => {
@@ -54,6 +74,8 @@ watch(searchValue, () => {
                 <div>
                 <h1 class="text-2xl font-bold text-slate-100">Dashboard</h1>
                     <p class="text-neutral-400 text-sm">Hai, {{ authStore.role }}</p>
+                    <p v-if="authStore.role == 'operation'" class="text-neutral-400 text-sm">You are an Operations user. You can filter and search data.</p>
+                    <p v-if="authStore.role == 'cs'" class="text-neutral-400 text-sm">You are a Customer Service user. You can view all data.</p>
                 </div>
              
                 <Button @click="handleLogout" variant="danger" size="sm">
@@ -64,23 +86,27 @@ watch(searchValue, () => {
                 <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
                     <section class="lg:col-span-9">
                         <Table title="Payments" subtitle="Incoming transactions" :searchable="true" :filterable="true">
-                            <template #search>
+                            <template v-if="authStore.role == 'operation'" #search>
                                 <InputField
-                                  type="text"
-                                  v-model="searchValue"
-                                  placeholder="Search by ID"
+                                    type="number"
+                                    v-model="searchValue"
+                                    placeholder="Search by ID"
+                                    size="sm"
                                 />
                             </template>
-                            <template #filters>
-                                <select
-                                  class="w-full rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 outline-none focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400"
-                                  v-model="selectedFilter"
-                                >
-                                  <option value="all">All</option>
-                                  <option value="completed">Completed</option>
-                                  <option value="processing">Processing</option>
-                                  <option value="failed">Failed</option>
-                                </select>
+                            <template v-if="authStore.role == 'operation'" #filters>
+                                <div class="flex d-flex gap-2">
+                                    <SelectField v-model="selectedFilter" size="sm">
+                                        <option value="all">All</option>
+                                        <option value="completed">Completed</option>
+                                        <option value="processing">Processing</option>
+                                        <option value="failed">Failed</option>
+                                    </SelectField>
+                                    <Button @click="handleReset" variant="warning" size="xs">
+                                         {{ paymentStore.loading ? "Loading..." : "Reset" }}
+                                    </Button>
+                                </div>
+                               
                             </template>
 
                             <template #head>
@@ -93,22 +119,20 @@ watch(searchValue, () => {
                                 </tr>
                             </template>
 
-                            <tr v-if="!data.length">
+                            <tr v-if="paymentStore.loading">
+                              <td class="px-3 py-3 text-neutral-500" colspan="5">
+                                Loading...
+                              </td>
+                            </tr>
+                            <tr v-else-if="!data.length">
                               <td class="px-3 py-3 text-neutral-500" colspan="5">
                                 No data
                               </td>
                             </tr>
-
-                            <tr v-if="authStore.loading">
-                              <td class="px-3 py-3 text-neutral-500" colspan="5">
-                                Loading....
-                              </td>
-                            </tr>
-
                             <tr v-else v-for="item in data" :key="item.id">
                               <td class="px-3 py-3">{{ item.id }}</td>
                               <td class="px-3 py-3">{{ item.merchant }}</td>
-                              <td class="px-3 py-3">{{ item.created_at || item.date }}</td>
+                              <td class="px-3 py-3">{{ formatTimestamp(item.created_at) }}</td>
                               <td class="px-3 py-3">{{ item.amount }}</td>
                               <td class="px-3 py-3">{{ item.status }}</td>
                             </tr>
@@ -118,21 +142,15 @@ watch(searchValue, () => {
                     <aside class="lg:col-span-3 space-y-6">
                         <div class="rounded-xl border border-neutral-700 bg-neutral-900 p-6">
                             <h3 class="text-white">Total</h3>
-                            <p class="text-neutral-400 text-sm">Total / Success / Failed</p>
+                            <h1 class="text-neutral-400">{{ totalWidget }}</h1>
                         </div>
-                        <div class="rounded-xl border border-neutral-700 bg-neutral-900 p-6">
-                            <h3 class="text-white">Success</h3>
-                            <p class="text-neutral-400 text-sm">Total / Success / Failed</p>
-                        </div>
-                        <div class="rounded-xl border border-neutral-700 bg-neutral-900 p-6">
-                            <h3 class="text-white">Failed</h3>
-                            <h1 class="text-neutral-400">70</h1>
+                        <div v-for="wid in widget" class="rounded-xl border border-neutral-700 bg-neutral-900 p-6">
+                            <h3 class="text-white">{{ capitalize(wid.status) }}</h3>
+                            <h1 class="text-neutral-400">{{ wid.total }}</h1>
                         </div>
                     </aside>
                 </div>
             </div>
-            
-           
         </div> 
     </div>
 </template>

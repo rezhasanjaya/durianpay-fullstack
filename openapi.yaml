@@ -102,11 +102,13 @@ components:
           schema:
             type: object
             properties:
-              type:
-                type: string
-                example: "widget"
+              total:
+                type: integer
+                example: 100
               widget:
-                $ref: '#/components/schemas/Widget'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Widget'
 
     UnauthorizedError:
       description: Authentication failed or missing credentials
@@ -176,4 +178,3 @@ paths:
           $ref: '#/components/responses/WidgetResponse'
         "401":
           $ref: '#/components/responses/UnauthorizedError'
-

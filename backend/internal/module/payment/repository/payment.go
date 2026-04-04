@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"strconv"
 	"strings"
 
 	"github.com/durianpay/fullstack-boilerplate/internal/entity"
@@ -10,11 +9,17 @@ import (
 
 type PaymentRepository interface {
 	GetPayments(id string, status string) ([]*entity.Payment, error)
-	DashboardWidget() (string, error)
+	DashboardWidget() ([]Widget, error)
+	GetTotal() (int, error)
 }
 
 type Payment struct {
 	db *sql.DB
+}
+
+type Widget struct {
+	Status string `json:"status"`
+	Total  int    `json:"total"`
 }
 
 func NewPaymentRepo(db *sql.DB) *Payment {
@@ -22,7 +27,7 @@ func NewPaymentRepo(db *sql.DB) *Payment {
 }
 
 func (r *Payment) GetPayments(id string, status string) ([]*entity.Payment, error) {
-	query := "SELECT id, merchant, date, amount, status FROM payments"
+	query := "SELECT id, merchant, created_at, amount, status FROM payments"
 	conditions := []string{}
 	args := []any{}
 
@@ -50,7 +55,7 @@ func (r *Payment) GetPayments(id string, status string) ([]*entity.Payment, erro
 	var payments []*entity.Payment
 	for data.Next() {
 		var payment entity.Payment
-		if err := data.Scan(&payment.ID, &payment.Merchant, &payment.Date, &payment.Amount, &payment.Status); err != nil {
+		if err := data.Scan(&payment.ID, &payment.Merchant, &payment.CreatedAt, &payment.Amount, &payment.Status); err != nil {
 			return nil, err
 		}
 		payments = append(payments, &payment)
@@ -59,23 +64,33 @@ func (r *Payment) GetPayments(id string, status string) ([]*entity.Payment, erro
 	return payments, nil
 }
 
-func (r *Payment) DashboardWidget() (string, error) {
+func (r *Payment) GetTotal() (int, error) {
+	countData := "SELECT COUNT(*) FROM payments"
+	var total int
+	err := r.db.QueryRow(countData).Scan(&total)
+	if err != nil {
+		return 0, err
+	}
+	return total, nil
+}
+
+func (r *Payment) DashboardWidget() ([]Widget, error) {
 	query := `SELECT status, COUNT(*) AS TOTAL FROM payments GROUP BY status`
 
 	data, err := r.db.Query(query)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer data.Close()
 
-	var result string
+	var result []Widget
 	for data.Next() {
 		var status string
 		var total int
 		if err := data.Scan(&status, &total); err != nil {
-			return "", err
+			return nil, err
 		}
-		result += status + ": " + strconv.Itoa(total) + "\n"
+		result = append(result, Widget{Status: status, Total: total})
 	}
 
 	return result, nil

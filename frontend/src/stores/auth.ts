@@ -33,10 +33,9 @@ export const useAuthStore = defineStore("auth", () => {
             localStorage.setItem('role', role.value ?? '')
         }
 
-    } catch (error) {
-        console.error('Login failed:', error)
-        throw error
-
+    } catch (err: any) {
+        console.error('Login failed:', err)
+        error.value = err.response?.data?.message || 'Login failed'
     } finally {
         loading.value = false
     }

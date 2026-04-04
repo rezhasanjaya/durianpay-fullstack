@@ -71,7 +71,7 @@ func seedingPayment(db *sql.DB, n int) error {
 		amount := rand.Intn(100)
 		date := time.Now().Add(-time.Duration(rand.Intn(30*24)) * time.Hour).Format(time.RFC3339)
 
-		if _, err := db.Exec("INSERT INTO payments(merchant, status, amount, date) VALUES (?, ?, ?, ?)", merchant, paymentStatus, amount, date); err != nil {
+		if _, err := db.Exec("INSERT INTO payments(merchant, status, amount, created_at) VALUES (?, ?, ?, ?)", merchant, paymentStatus, amount, date); err != nil {
 			return err
 		}
 	}
@@ -91,9 +91,9 @@ func initDB(db *sql.DB) error {
 		`CREATE TABLE IF NOT EXISTS payments (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			merchant TEXT NOT NULL,
-			date TEXT NOT NULL,
 			amount TEXT NOT NULL,
-			status TEXT NOT NULL
+			status TEXT NOT NULL,
+			created_at TEXT NOT NULL
 		);`,
 	}
 	for _, s := range stmts {

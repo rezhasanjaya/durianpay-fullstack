@@ -6,6 +6,8 @@ export const usePaymentStore = defineStore("payment", () => {
     const api = createApi({ auth: true })
 
     const payments = ref<any[]>([])
+    const widget = ref<any[]>([])
+    const totalData = ref<number>(0)
     const loading = ref(false)
     const error = ref<string | null>(null)
 
@@ -30,5 +32,21 @@ export const usePaymentStore = defineStore("payment", () => {
         }
     }
 
-  return { payments, loading, error, fetch }
+    async function fetchWidget() {
+        loading.value = true
+        error.value = null
+        
+        try {   
+            const response = await api.get('/dashboard/v1/widget')
+            widget.value = response.data.widget ?? []
+            totalData.value = response.data.total ?? 0
+        } catch (err) {
+            console.error('Failed to fetch widget data:', err)
+            error.value = 'Failed to load widget data'
+        } finally {
+            loading.value = false
+        }
+    }
+
+  return { payments, widget, totalData, loading, error, fetch, fetchWidget }
 })  

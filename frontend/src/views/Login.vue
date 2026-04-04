@@ -17,7 +17,7 @@ const handleSubmit = async () => {
         await authStore.login(email.value, password.value)
         route.push('/dashboard')
     } catch (error) {
-        //
+        // error already handled in authStore
     }
 }
 </script>
@@ -27,10 +27,6 @@ const handleSubmit = async () => {
     <div class="mx-auto flex min-h-screen max-w-6xl items-center justify-center px-6 py-10">
       <div class="w-full max-w-md">
 
-        <div v-if="authStore.error" class="mb-3 text-sm text-red-400">
-          {{ authStore.error }}
-        </div>
-
         <Card
           variant="grey"
           :padded=true
@@ -38,6 +34,10 @@ const handleSubmit = async () => {
           <template #header>
             <h1 class="text-xl font-semibold text-slate-100">Login Page</h1>
           </template>
+
+          <div v-if="authStore.error" class="text-sm mb-3 text-red-400">
+            {{ authStore.error }}
+          </div>
 
           <form class="space-y-4" 
             @submit.prevent="handleSubmit"
