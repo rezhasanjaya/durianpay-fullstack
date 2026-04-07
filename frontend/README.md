@@ -3,17 +3,14 @@
 ## Prasyarat
 - Node.js 20+
 
-## Setup & Run
+## Cara Menjalankan
 ```bash
+cp .env.example .env
 npm install
 npm run dev
 ```
 
 Frontend berjalan di `http://localhost:3001`.
 
-## Env
-Salin `.env.example` menjadi `.env` jika perlu:
-```
-VITE_APP_URL=http://localhost:3001
-VITE_API_BASE_URL=http://localhost:8080
-```
+## Catatan
+Jika backend berjalan di port lain, ubah `VITE_API_BASE_URL` di `.env`.
