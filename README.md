@@ -30,10 +30,12 @@ cd proyek
 ### 2) Clone project
 ```bash
 git clone https://github.com/rezhasanjaya/durianpay-fullstack.git
-cd fullstack-boilerplate-master
+cd durianpay-fullstack
 ```
 
 ### 3) Jalankan Backend (tanpa Docker)
+Masuk Ke PATH project (lokasi anda clone)
+
 ```bash
 cd backend
 cp env.sample .env
@@ -46,8 +48,10 @@ Backend: `http://localhost:8080`
 
 ### 4) Jalankan Frontend (tanpa Docker)
 Buka terminal baru:
+dan Masuk Ke PATH project (lokasi anda clone)
+
 ```bash
-cd ~/Desktop/proyek/fullstack-boilerplate-master/frontend
+cd frontend
 cp .env.example .env
 npm install
 npm run dev
@@ -68,7 +72,6 @@ Untuk Menjalankannya Masukan Perintah:
 ```bash
 docker compose up --build
 ```
-Setelah `docker compose up --build` berjalan, tekan tombol `v` di terminal (Docker Desktop shortcut) untuk membuka web.
 
 **Akses setelah Docker berjalan:**
 - Frontend: `http://localhost:3001`
