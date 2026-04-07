@@ -47,12 +47,22 @@ Silakan untuk fetch dockerfile pada branch `docker`:
 
 Buka Terminal
 ```bash
-git checkout -b docker
+git checkout docker
 ```
 Untuk Menjalankannya Masukan Perintah:
 ```bash
 docker compose up --build
 ```
+Setelah `docker compose up --build` berjalan, tekan tombol `v` di terminal (Docker Desktop shortcut) untuk membuka web.
+
+**Akses setelah Docker berjalan:**
+- Frontend: `http://localhost:3001`
+- Login: `http://localhost:3001/login`
+- Backend: `http://localhost:8080`
+
+**Akun demo:**
+- `cs@test.com` / `password`
+- `operation@test.com` / `password`
 
 ## Testing Backend
 ```bash
