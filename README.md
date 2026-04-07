@@ -4,20 +4,23 @@ Repository ini berisi:
 - `backend/` (Golang + SQLite)
 - `frontend/` (Vue + Vite)
 
-## Prasyarat
-- Go 1.21+
-- Node.js 20+
-- Make
+## Cara Install (Langkah Ringkas & Jelas)
 
-## Struktur
-```
-.
-├─ backend/
-├─ frontend/
-└─ openapi.yaml
+### 1) Buka Terminal dan masuk ke folder kerja
+Contoh buat folder kerja di Desktop:
+```bash
+cd ~/Desktop
+mkdir proyek
+cd proyek
 ```
 
-## Menjalankan Backend
+### 2) Clone project
+```bash
+git clone <URL_REPO_KAMU>
+cd fullstack-boilerplate-master
+```
+
+### 3) Jalankan Backend (tanpa Docker)
 ```bash
 cd backend
 cp env.sample .env
@@ -26,16 +29,28 @@ make gen-secret
 make openapi-gen
 make run
 ```
-Backend berjalan di `http://localhost:8080`.
+Backend: `http://localhost:8080`
 
-## Menjalankan Frontend
+### 4) Jalankan Frontend (tanpa Docker)
+Buka terminal baru:
 ```bash
-cd frontend
-cp env.example .env
+cd ~/Desktop/proyek/fullstack-boilerplate-master/frontend
+cp .env.example .env
 npm install
 npm run dev
 ```
-Frontend berjalan di `http://localhost:3001`.
+Frontend: `http://localhost:3001`
+
+## Install via Docker (branch `docker`)
+Kamu sudah siapkan branch `docker`. Langkahnya:
+```bash
+git checkout docker
+```
+Lalu jalankan sesuai file docker di branch tersebut. Umumnya:
+```bash
+docker compose up --build
+```
+Jika nama file berbeda, ikuti README di branch `docker`.
 
 ## Testing Backend (contoh)
 ```bash
