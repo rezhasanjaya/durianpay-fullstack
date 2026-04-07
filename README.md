@@ -4,7 +4,7 @@ Repository ini berisi:
 - `backend/` (Golang + SQLite)
 - `frontend/` (Vue + Vite)
 
-## Cara Install (Langkah Ringkas & Jelas)
+## Cara Install
 
 ### 1) Buka Terminal dan masuk ke folder kerja
 Contoh buat folder kerja di Desktop:
@@ -16,7 +16,7 @@ cd proyek
 
 ### 2) Clone project
 ```bash
-git clone <URL_REPO_KAMU>
+git clone https://github.com/rezhasanjaya/durianpay-fullstack.git
 cd fullstack-boilerplate-master
 ```
 
@@ -39,20 +39,22 @@ cp .env.example .env
 npm install
 npm run dev
 ```
-Frontend: `http://localhost:3001`
+Frontend: `http://localhost:3001`  
+Login: `http://localhost:3001/login`
 
 ## Install via Docker (branch `docker`)
-Kamu sudah siapkan branch `docker`. Langkahnya:
+Silakan untuk fetch dockerfile pada branch `docker`:
+
+Buka Terminal
 ```bash
-git checkout docker
+git checkout -b docker
 ```
-Lalu jalankan sesuai file docker di branch tersebut. Umumnya:
+Untuk Menjalankannya Masukan Perintah:
 ```bash
 docker compose up --build
 ```
-Jika nama file berbeda, ikuti README di branch `docker`.
 
-## Testing Backend (contoh)
+## Testing Backend
 ```bash
 cd backend
 go test ./internal/module/payment/repository -v
