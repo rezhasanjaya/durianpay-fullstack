@@ -4,6 +4,19 @@ Repository ini berisi:
 - `backend/` (Golang + SQLite)
 - `frontend/` (Vue + Vite)
 
+## Prasyarat
+- Go 1.21+
+- Node.js 20+
+- Make
+
+## Struktur
+```
+.
+├─ backend/
+├─ frontend/
+└─ openapi.yaml
+```
+
 ## Cara Install
 
 ### 1) Buka Terminal dan masuk ke folder kerja
@@ -47,6 +60,8 @@ Silakan untuk fetch dockerfile pada branch `docker`:
 
 Buka Terminal
 ```bash
+git checkout -b docker
+# jika branch sudah ada:
 git checkout docker
 ```
 Untuk Menjalankannya Masukan Perintah:
