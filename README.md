@@ -30,7 +30,7 @@ cd proyek
 ### 2) Clone project
 ```bash
 git clone https://github.com/rezhasanjaya/durianpay-fullstack.git
-cd fullstack-boilerplate-master
+cd durianpay-fullstack
 ```
 
 ### 3) Jalankan Backend (tanpa Docker)
